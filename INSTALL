@@ -1,0 +1,11 @@
+To install, it's pretty much just:
+
+ruby extconf.rb
+make all install
+
+On the off chance that the binary module can't be compiled, there's an alternate (pure-ruby) core, that
+you can install by doing:
+
+ruby install-pr.rb
+
+However, you should note that the binary module is faster, if not massively so.
