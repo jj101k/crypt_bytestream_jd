@@ -1,5 +1,9 @@
 #include "ruby.h"
+#ifdef HAVE_STDINT_H
 #include <stdint.h>
+#else
+#include <machine/types.h>
+#endif
 
 VALUE cSelf;
 
