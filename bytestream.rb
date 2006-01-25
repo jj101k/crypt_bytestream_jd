@@ -26,4 +26,19 @@ a^bb^bb
         end
         self.class.new(out_bytes.pack("C*"))
     end
+               def +(string)
+        my_dwords=self.unpack("N*")
+        other_dwords=string.unpack("N*")
+        max_length=if(my_dwords.length > other_dwords.length)
+            my_dwords.length
+        else
+            other_dwords.length
+        end
+        out_dwords=Array.new
+        0.upto(max_length-1) do
+            |i|
+            out_dwords[i]=(my_dwords[i]||0)+(other_dwords[i]||0)&0xffffffff
+        end
+        self.class.new(out_dwords.pack("N*"))
+               end
 end
