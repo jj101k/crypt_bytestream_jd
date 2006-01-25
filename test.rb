@@ -1,5 +1,5 @@
-require "bytestream"
-foo=ByteStream.new("fooz")
+require "./bytestream"
+foo=Crypt::ByteStream.new("fooz")
 puts "Checking integrity..."
 puts(if(foo=="fooz")
 	"Ok" 

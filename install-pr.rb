@@ -3,4 +3,5 @@ include Config
 require "fileutils"
 include FileUtils::Verbose
 
-install("bytestream.rb", CONFIG["sitelibdir"]+"/")
+mkdir_p(CONFIG["sitelibdir"]+"/crypt")
+install("bytestream.rb", CONFIG["sitelibdir"]+"/crypt/")
