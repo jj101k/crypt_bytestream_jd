@@ -1,1 +1,4 @@
 Move bytestream.rb out of the way
+Test '+'
+Add docs
+Detect 32b usage?
