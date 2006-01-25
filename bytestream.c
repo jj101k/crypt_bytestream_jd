@@ -103,9 +103,9 @@ static uint32_t * _binary_add_32(uint32_t *string1, uint32_t length1, uint32_t *
 		uint32_t overflow=0;
 		uint64_t accumulator;
     for(i=0;i<small_length;i++) {
-				accumulator=string1[i]+string2[i]+overflow;
+				accumulator=ntohl(string1[i])+ntohl(string2[i])+overflow;
 				overflow=(accumulator>=1ll<<32)?1:0;
-        out_p[i]=accumulator%(1ll<<32);
+        out_p[i]=htonl(accumulator%(1ll<<32));
     }
     /* 
      * Domino the tail (the bit after the shorter string would end)
@@ -115,9 +115,9 @@ static uint32_t * _binary_add_32(uint32_t *string1, uint32_t length1, uint32_t *
     if(small_length!=large_length) {
 			uint32_t *larger_string=i_am_smaller ? string1 : string2;
 			for(i=small_length;i<large_length;i++) {
-				accumulator=larger_string[i]+overflow;
+				accumulator=ntohl(larger_string[i])+overflow;
 				overflow=(accumulator>=(1ll<<32))?1:0;
-				out_p[i]=accumulator%(1ll<<32);
+				out_p[i]=htonl(accumulator%(1ll<<32));
 			}
 		}
     
