@@ -1,4 +1,13 @@
 v0.91
+Jim Driscoll (8):
+      Add a bit of performance stuff to the testing
+      Rubinius: ignore compiles scripts
+      Clean up documentation
+      Note about the speed
+      Sensibly specify the mode for install
+      Reindent the code a bit
+      1.9 compat: add an explicit method to get a particular byte
+      Release v0.91
 v0.9
 Jim A. Driscoll:
       Put bytestream.? in the right place
