@@ -1,5 +1,5 @@
 class Crypt
-class ByteStream < String
+  class ByteStream < String
 =begin rdoc
 A subclass of String with a single purpose: to provide the ^ (XOR) operator, for encryption purposes.
 =end
@@ -27,7 +27,7 @@ a^bb^bb
         end
         self.class.new(out_bytes.pack("C*"))
     end
-               def +(string)
+    def +(string)
         my_dwords=self.unpack("N*")
         other_dwords=string.unpack("N*")
         max_length=if(my_dwords.length > other_dwords.length)
@@ -41,6 +41,6 @@ a^bb^bb
             out_dwords[i]=(my_dwords[i]||0)+(other_dwords[i]||0)&0xffffffff
         end
         self.class.new(out_dwords.pack("N*"))
-               end
-end
+    end
+  end
 end
