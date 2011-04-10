@@ -57,7 +57,7 @@ a^bb^bb
       @@strict_mode=new_mode
     end
     def [](anything, whatever=nil)
-      if(whatever)
+      if(whatever or not anything.is_a? Numeric)
         super(anything, whatever)
       elsif(@@strict_mode)
         raise "Ambiguous, you must use #byte_at instead"
