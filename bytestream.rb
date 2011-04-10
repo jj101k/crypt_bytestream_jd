@@ -55,7 +55,7 @@ a^bb^bb
       @@strict_mode=new_mode
     end
     def [](anything)
-      if(strict_mode)
+      if(@@strict_mode)
         raise "Ambiguous, you must use #byte_at instead"
       else
         STDERR.puts "Ambiguous usage of [], please use #byte_at"
