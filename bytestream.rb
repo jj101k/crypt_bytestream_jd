@@ -47,7 +47,7 @@ a^bb^bb
       if(Use_getbyte)
         self.getbyte(position)
       else
-        self[position]
+        self.slice(position)
       end
     end
     @@strict_mode = false
