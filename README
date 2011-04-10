@@ -56,6 +56,14 @@ Crypt::ByteStream.new("a")^"bb"^"bb" will not work;
 un-ruby-like. My recommendation for multiple XORs is to put them
 on separate lines for now.
 
+Performance is an interesting issue: Ruby does NOT want to deal
+with strings (or more specifically arrays of characters) as anything
+other than text. For the pure-Ruby core: On both MRI (1.8.x) and
+YARV (1.9.x), doing 10000 simple XORs via test.rb takes 0.06-0.09
+seconds; on rubinius it's 0.6 seconds. If you're using this for
+encryption or decryption, this could be an issue. The binary core
+is fast enough to be roughly comparable with OpenSSL.
+
 BUGS
 
 This should use duck-typing, but doesn't. This shouldn't affect
