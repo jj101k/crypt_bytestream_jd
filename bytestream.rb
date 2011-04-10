@@ -50,5 +50,16 @@ a^bb^bb
         self[position]
       end
     end
+    @@strict_mode = false
+    def self.strict_mode=(new_mode)
+      @@strict_mode=new_mode
+    end
+    def [](anything)
+      if(strict_mode)
+        raise "Ambiguous, you must use #byte_at instead"
+      else
+        STDERR.puts "Ambiguous usage of [], please use #byte_at"
+      end
+    end
   end
 end
