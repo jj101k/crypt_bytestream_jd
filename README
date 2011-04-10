@@ -4,20 +4,31 @@ Crypt::ByteStream
 
 DESCRIPTION
 
-This module provides a subclass of String with the ability to XOR it against other String-like objects.
+This module provides a subclass of String with the ability to XOR
+it against other String-like objects.
 
 RATIONALE
 
-I needed the ability to XOR strings. I could have created a function (not method) to do this, but that's
-not the Ruby way - the Ruby way is to stick it where it belongs, in the object's method list. I could
-have written something(quite easily) to put this function into String itself, but didn't for three 
-reasons:
+I needed the ability to XOR strings. I could have created a function
+(not method) to do this, but that's not the Ruby way - the Ruby way
+is to stick it where it belongs, in the object's method list. I
+could have written something(quite easily) to put this function
+into String itself, but didn't for three reasons:
 
-- Certain other binary operands (I'm thinking mostly of '~' (binary NOT) here) would be confusing in
-the almighty class String, due to their similarity to existing syntax.
-- Byte streams are not strings. They may often look like strings, but they really really are not. In
-particular, while a byte stream could have an encoding, it can't have a charset. It's better to think of Crypt::ByteStream as something that can contain data and can be conveniently expressed as a string.
-- Real Strings would have a different use for XOR: "foo"^"foo" should really return nil (or "000" or zero), and "foo"^"bar" should return 1 (or "111"), since you should only consider whether the characters are different, not their binary representation.
+- Certain other binary operands (I'm thinking mostly of '~' (binary
+NOT) here) would be confusing in the almighty class String, due to
+their similarity to existing syntax.
+
+- Byte streams are not strings. They may often look like strings,
+but they really really are not. In particular, while a byte stream
+could have an encoding, it can't have a charset. It's better to
+think of Crypt::ByteStream as something that can contain data and
+can be conveniently expressed as a string.
+
+- Real Strings would have a different use for XOR: "foo"^"foo"
+should really return nil (or "000" or zero), and "foo"^"bar" should
+return 1 (or "111"), since you should only consider whether the
+characters are different, not their binary representation.
 
 USAGE
 
@@ -26,21 +37,32 @@ bar=foo^"Baaaaaar"
 
 NOTES
 
-Returned values are still of class Crypt::ByteStream, and are of the same length as the longer value. Note that this means that:
-a=Crypt::ByteStream.new("a")
-bb=Crypt::ByteStream.new("b")
-a^bb^bb
+Returned values are still of class Crypt::ByteStream, and are of
+the same length as the longer value. Note that this means that:
 
-...does not equal "a" but rather "a\000", so this should be used with caution except where you have equal-size strings in mind. This module *could* use some form of padding, but it works this way to be compatible with perl.
+  a=Crypt::ByteStream.new("a")
+  bb=Crypt::ByteStream.new("b")
+  a^bb^bb
 
-You should also note that ruby handles "operators" in right-to-left fashion (and it could do it in any order at all), so Crypt::ByteStream.new("a")^"bb"^"bb" will not work; (Crypt::ByteStream.new("a")^"bb")^"bb" will work, but looks very un-ruby-like. My recommendation for multiple XORs is to put them on separate lines for
-now.
+...does not equal "a" but rather "a\000", so this should be used with
+caution except where you have equal-size strings in mind. This
+module *could* use some form of padding, but it works this way to
+be compatible with perl.
+
+You should also note that ruby handles "operators" in right-to-left
+fashion (and it could do it in any order at all), so
+Crypt::ByteStream.new("a")^"bb"^"bb" will not work;
+(Crypt::ByteStream.new("a")^"bb")^"bb" will work, but looks very
+un-ruby-like. My recommendation for multiple XORs is to put them
+on separate lines for now.
 
 BUGS
 
-This should use duck-typing, but doesn't. This shouldn't affect real usage, though.
+This should use duck-typing, but doesn't. This shouldn't affect
+real usage, though.
 
 COPYRIGHT
 
-This files in this distribution are copyright 2005 Jim Driscoll <jim@RJimLad.org.uk>; please see the
-included file COPYING for details.
+This files in this distribution are copyright 2005-2011 Jim Driscoll
+<jim.a.driscoll@gmail.com>; please see the included file COPYING
+for details.
