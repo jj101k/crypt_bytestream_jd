@@ -43,8 +43,10 @@ a^bb^bb
         self.class.new(out_dwords.pack("N*"))
     end
     Use_getbyte = "".respond_to?(:getbyte)
-    def byte_at(position)
-      if(Use_getbyte)
+    def byte_at(position, new_value=nil)
+      if(new_value)
+        self.slice(position, 1)=[new_value].pack("C")
+      elsif(Use_getbyte)
         self.getbyte(position)
       else
         self.slice(position)
