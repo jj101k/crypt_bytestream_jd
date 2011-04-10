@@ -45,7 +45,7 @@ a^bb^bb
     Use_getbyte = "".respond_to?(:getbyte)
     def byte_at(position, new_value=nil)
       if(new_value)
-        self.slice(position, 1)=[new_value].pack("C")
+        self[position, 1]=[new_value].pack("C")
       elsif(Use_getbyte)
         self.getbyte(position)
       else
@@ -58,7 +58,7 @@ a^bb^bb
     end
     def [](anything, whatever=nil)
       if(whatever)
-        self.slice(anything, whatever)
+        super(anything, whatever)
       elsif(@@strict_mode)
         raise "Ambiguous, you must use #byte_at instead"
       else
