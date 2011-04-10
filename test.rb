@@ -20,3 +20,10 @@ puts(if(foo=="123\000")
 else 
 	"No" 
 end)
+
+TestTimes=10000
+puts "Testing performance: #{TestTimes} simple XORs"
+TestTimes.times do
+  |i|
+  foo^=i.to_s 
+end
