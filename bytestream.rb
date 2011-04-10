@@ -42,5 +42,13 @@ a^bb^bb
         end
         self.class.new(out_dwords.pack("N*"))
     end
+    Use_getbyte = "".respond_to(:getbyte)
+    def byte_at(position)
+      if(Use_getbyte)
+        self.getbyte(position)
+      else
+        self[position]
+      end
+    end
   end
 end
