@@ -54,7 +54,7 @@ a^bb^bb
     def self.strict_mode=(new_mode)
       @@strict_mode=new_mode
     end
-    def [](anything)
+    def [](anything, whatever=nil)
       if(@@strict_mode)
         raise "Ambiguous, you must use #byte_at instead"
       else
