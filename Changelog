@@ -1,3 +1,16 @@
+v0.9.3
+Jim Driscoll (10):
+      Fix changelog
+      Fix another stupid error
+      Avoid triggering own warning
+      Nominally support two-arg mode@=
+      Actually do support the two-arg mode, as it is unchanged
+      Support setting here
+      Allow String#[] to be called in some cases
+      Passing a range (or whatever) is still fine
+      Split the test
+      Update release tools
+
 v0.92
 Jim Driscoll (5):
       Fix changelog
