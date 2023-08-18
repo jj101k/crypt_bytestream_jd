@@ -173,8 +173,8 @@ static uint32_t * _binary_xor_32(uint32_t *string1, uint32_t length1, uint32_t *
  * class as self.
  *
  * Returned values are of the same length as the longer value. Note that this means that:
- * a=Crypt::ByteStream.new("a")
- * bb=Crypt::ByteStream.new("bb")
+ * a=JdCrypt::ByteStream.new("a")
+ * bb=JdCrypt::ByteStream.new("bb")
  * a^bb^bb
  *
  * ...does not equal "a" but rather "a\000", so this should be used with caution except where you have
@@ -252,8 +252,8 @@ static VALUE bs_to_str(VALUE self) {
  *A subclass of String with a single purpose: to provide the ^ (XOR) operator, for encryption purposes.
 */
 void Init_bytestream() {
-    VALUE cCrypt=rb_define_class("Crypt", rb_cObject);
-    VALUE cSelf=rb_define_class_under(cCrypt, "ByteStream", rb_cString);
+    VALUE cJdCrypt=rb_define_class("JdCrypt", rb_cObject);
+    VALUE cSelf=rb_define_class_under(cJdCrypt, "ByteStream", rb_cString);
     rb_define_method(cSelf, "^", bs_binary_xor, 1);
     rb_define_method(cSelf, "+", bs_binary_add, 1);
     rb_define_method(cSelf, "to_str", bs_to_str, 0);

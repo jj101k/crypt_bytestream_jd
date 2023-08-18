@@ -1,13 +1,13 @@
-class Crypt
+class JdCrypt
   class ByteStream < String
 =begin rdoc
 A subclass of String with a single purpose: to provide the ^ (XOR) operator, for encryption purposes.
 =end
 
 =begin rdoc
-Returned values are still of class Crypt::ByteStream, and are of the same length as the longer value. Note that this means that:
-a=Crypt::ByteStream.new("a")
-bb=Crypt::ByteStream.new("b")
+Returned values are still of class JdCrypt::ByteStream, and are of the same length as the longer value. Note that this means that:
+a=JdCrypt::ByteStream.new("a")
+bb=JdCrypt::ByteStream.new("b")
 a^bb^bb
 
 ...does not equal "a" but rather "a\000", so this should be used with caution except where you have equal-size strings in mind.

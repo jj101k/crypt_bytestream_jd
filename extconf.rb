@@ -1,3 +1,3 @@
 require "mkmf"
 have_header("stdint.h")
-create_makefile("crypt/bytestream")
+create_makefile("jdcrypt/bytestream")
