@@ -7,12 +7,15 @@
 
 VALUE cSelf;
 
-static uint32_t * _binary_add_32(uint32_t *string1, uint32_t length1, uint32_t *string2, uint32_t length2);
+static uint32_t * _binary_add_32(uint32_t *string1, uint32_t length1,
+    uint32_t *string2, uint32_t length2);
+
 /*
  * Binary add with a "String"-like object, return an object of the same
  * class as self.
  *
- * Returned values are of the same length as the longer value. Note that this means that overflows are _dropped_.
+ * Returned values are of the same length as the longer value. Note that this
+ * means that overflows are _dropped_.
  *
  */
 
@@ -23,108 +26,114 @@ static VALUE bs_binary_add(VALUE self, VALUE in_string) {
     long small_length, large_length;
     char i_am_smaller;
     int i;
+    long self_len, in_len;
     VALUE string_out;
 
-    in_string_p=RSTRING_PTR(in_string);
-    self_p=RSTRING_PTR(self);
+    in_string_p = RSTRING_PTR(in_string);
+    self_p = RSTRING_PTR(self);
+    self_len = RSTRING_LEN(self);
+    in_len = RSTRING_LEN(in_string);
 
-		/*
-		 * Find out which is longer (it doesn't matter if neither is)
-		 */
-		if(RSTRING_LEN(self) < RSTRING_LEN(in_string)) {
-				i_am_smaller=1;
-				small_length=RSTRING_LEN(self);
-				large_length=RSTRING_LEN(in_string);
-		} else {
-				i_am_smaller=0;
-				small_length=RSTRING_LEN(in_string);
-				large_length=RSTRING_LEN(self);
-		}
+    /*
+     * Find out which is longer (it doesn't matter if neither is)
+     */
+    if(self_len < in_len) {
+        i_am_smaller = 1;
+        small_length = self_len;
+        large_length = in_len;
+    } else {
+        i_am_smaller = 0;
+        small_length = in_len;
+        large_length = self_len;
+    }
 
-		if( (RSTRING_LEN(self))%4==0 && (RSTRING_LEN(in_string))%4==0) {
-			out_p=(char *)_binary_add_32((uint32_t *)self_p, (RSTRING_LEN(self))/4, (uint32_t *)in_string_p, (RSTRING_LEN(in_string))/4);
-		} else {
+    if(self_len % 4 == 0 && in_len % 4 == 0) {
+        out_p = (char *)_binary_add_32((uint32_t *)self_p,
+            self_len/4, (uint32_t *)in_string_p, in_len/4);
+    } else {
+        out_p = (char *)malloc(sizeof(char)* large_length);
 
-			out_p=(char *)malloc(sizeof(char)* large_length);
-
-
-			/*
-			 * For each byte that exists in both strings, add the result into the
-			 * (start of the) output c-string
-			 */
-			char overflow=0;
-			short accumulator;
-			for(i=0;i<small_length;i++) {
-					accumulator=self_p[i]+in_string_p[i]+overflow;
-					overflow=(accumulator>=256)?1:0;
-					out_p[i]=accumulator%256;
-			}
-			/*
-			 * Domino the tail (the bit after the shorter string would end)
-			 * of the longer string. Note that this is rather inefficient
-			 * for cases where the overflow is absorbed early.
-			 */
-			if(small_length!=large_length) {
-				char *larger_string=i_am_smaller ? self_p : in_string_p;
-				for(i=small_length;i<large_length;i++) {
-					accumulator=larger_string[i]+overflow;
-					overflow=(accumulator>=256)?1:0;
-					out_p[i]=accumulator%256;
-				}
-			}
-		}
+        /*
+         * For each byte that exists in both strings, add the result into the
+         * (start of the) output c-string
+         */
+        char overflow = 0;
+        short accumulator;
+        for(i = 0; i < small_length; i++) {
+            accumulator = self_p[i] + in_string_p[i] + overflow;
+            overflow = (accumulator >= 256) ? 1 : 0;
+            out_p[i] = accumulator % 256;
+        }
+        /*
+         * Domino the tail (the bit after the shorter string would end)
+         * of the longer string. Note that this is rather inefficient
+         * for cases where the overflow is absorbed early.
+         */
+        if(small_length != large_length) {
+            char *larger_string = i_am_smaller ? self_p : in_string_p;
+            for(i = small_length; i < large_length; i++) {
+                accumulator = larger_string[i] + overflow;
+                overflow = (accumulator >= 256) ? 1 : 0;
+                out_p[i] = accumulator % 256;
+            }
+        }
+    }
 
     /*
      * Create a new "String" and massage it into the local class type.
      */
-    string_out=rb_str_new(out_p, large_length);
+    string_out = rb_str_new(out_p, large_length);
     free(out_p);
     return rb_class_new_instance(1, (VALUE *)&string_out, rb_obj_class(self));
 }
-static uint32_t * _binary_add_32(uint32_t *string1, uint32_t length1, uint32_t *string2, uint32_t length2) {
+static uint32_t * _binary_add_32(uint32_t *string1, uint32_t length1,
+    uint32_t *string2, uint32_t length2
+) {
     uint32_t *out_p;
     long small_length, large_length;
     char i_am_smaller;
     int i;
 
     if(length1 < length2) {
-        i_am_smaller=1;
-        small_length=length1;
-        large_length=length2;
+        i_am_smaller = 1;
+        small_length = length1;
+        large_length = length2;
     } else {
-        i_am_smaller=0;
-        small_length=length2;
-        large_length=length1;
+        i_am_smaller = 0;
+        small_length = length2;
+        large_length = length1;
     }
 
-    out_p=(uint32_t *)malloc(sizeof(uint32_t)* large_length);
+    out_p = (uint32_t *)malloc(sizeof(uint32_t)* large_length);
 
-
-		uint32_t overflow=0;
-		uint64_t accumulator;
-    for(i=0;i<small_length;i++) {
-				accumulator=ntohl(string1[i])+ntohl(string2[i])+overflow;
-				overflow=(accumulator>=1ll<<32)?1:0;
-        out_p[i]=htonl(accumulator%(1ll<<32));
+    uint32_t overflow = 0;
+    uint64_t accumulator;
+    for(i = 0; i < small_length; i++) {
+        accumulator = ntohl(string1[i]) + ntohl(string2[i]) + overflow;
+        overflow = (accumulator >= 1ll << 32) ? 1 : 0;
+        out_p[i] = htonl(accumulator % (1ll << 32));
     }
+
     /*
      * Domino the tail (the bit after the shorter string would end)
      * of the longer string. Note that this is rather inefficient
      * for cases where the overflow is absorbed early.
      */
     if(small_length!=large_length) {
-			uint32_t *larger_string=i_am_smaller ? string1 : string2;
-			for(i=small_length;i<large_length;i++) {
-				accumulator=ntohl(larger_string[i])+overflow;
-				overflow=(accumulator>=(1ll<<32))?1:0;
-				out_p[i]=htonl(accumulator%(1ll<<32));
-			}
-		}
+        uint32_t *larger_string=i_am_smaller ? string1 : string2;
+        for(i = small_length; i < large_length; i++) {
+            accumulator = ntohl(larger_string[i]) + overflow;
+            overflow = (accumulator >= (1ll << 32)) ? 1 : 0;
+            out_p[i] = htonl(accumulator % (1ll << 32));
+        }
+    }
 
-		return out_p;
+    return out_p;
 }
 
-static uint32_t * _binary_xor_32(uint32_t *string1, uint32_t length1, uint32_t *string2, uint32_t length2) {
+static uint32_t * _binary_xor_32(uint32_t *string1, uint32_t length1,
+    uint32_t *string2, uint32_t length2
+) {
     uint32_t *out_p;
     long small_length, large_length;
     char i_am_smaller;
@@ -134,16 +143,16 @@ static uint32_t * _binary_xor_32(uint32_t *string1, uint32_t length1, uint32_t *
      * Find out which is longer (it doesn't matter if neither is)
      */
     if(length1 < length2) {
-        i_am_smaller=1;
-        small_length=length1;
-        large_length=length2;
+        i_am_smaller = 1;
+        small_length = length1;
+        large_length = length2;
     } else {
-        i_am_smaller=0;
-        small_length=length2;
-        large_length=length1;
+        i_am_smaller = 0;
+        small_length = length2;
+        large_length = length1;
     }
 
-    out_p=(uint32_t *)malloc(sizeof(uint32_t)* large_length);
+    out_p = (uint32_t *)malloc(sizeof(uint32_t)* large_length);
 
     /*
      * Copy the tail (the bit after the shorter string would end)
@@ -152,33 +161,35 @@ static uint32_t * _binary_xor_32(uint32_t *string1, uint32_t length1, uint32_t *
      * But only if there actually is a longer string.
      */
 
-    if(small_length!=large_length)
-        memcpy(out_p+small_length,
-               (i_am_smaller ? string2 : string1)+small_length,
-               (large_length-small_length)*4);
+    if(small_length != large_length) {
+        memcpy(out_p + small_length,
+            (i_am_smaller ? string2 : string1) + small_length,
+            (large_length - small_length) * 4);
+    }
 
     /*
      * For each byte that exists in both strings, XOR the result into the
      * (start of the) output c-string
      */
-    for(i=0;i<small_length;i++) {
-        out_p[i]=string1[i]^string2[i];
+    for(i = 0; i < small_length; i++) {
+        out_p[i] = string1[i] ^ string2[i];
     }
-
-		return out_p;
+    return out_p;
 }
 
 /*
  * Binary XOR with a "String"-like object, return an object of the same
  * class as self.
  *
- * Returned values are of the same length as the longer value. Note that this means that:
+ * Returned values are of the same length as the longer value. Note that this
+ * means that:
+ *
  * a=JdCrypt::ByteStream.new("a")
  * bb=JdCrypt::ByteStream.new("bb")
  * a^bb^bb
  *
- * ...does not equal "a" but rather "a\000", so this should be used with caution except where you have
- * equal-size strings in mind.
+ * ...does not equal "a" but rather "a\000", so this should be used with caution
+ * except where you have equal-size strings in mind.
  */
 
 static VALUE bs_binary_xor(VALUE self, VALUE in_string) {
@@ -189,57 +200,61 @@ static VALUE bs_binary_xor(VALUE self, VALUE in_string) {
     char i_am_smaller;
     int i;
     VALUE string_out;
+    long self_len, in_len;
 
-    in_string_p=RSTRING_PTR(in_string);
-    self_p=RSTRING_PTR(self);
+    in_string_p = RSTRING_PTR(in_string);
+    self_p = RSTRING_PTR(self);
+
+    self_len = RSTRING_LEN(self);
+    in_len = RSTRING_LEN(in_string);
 
     /*
      * Find out which is longer (it doesn't matter if neither is)
      */
-    if(RSTRING_LEN(self) < RSTRING_LEN(in_string)) {
-        i_am_smaller=1;
-        small_length=RSTRING_LEN(self);
-        large_length=RSTRING_LEN(in_string);
+    if(self_len < in_len) {
+        i_am_smaller = 1;
+        small_length = self_len;
+        large_length = in_len;
     } else {
-        i_am_smaller=0;
-        small_length=RSTRING_LEN(in_string);
-        large_length=RSTRING_LEN(self);
+        i_am_smaller = 0;
+        small_length = in_len;
+        large_length = self_len;
     }
-		if( (RSTRING_LEN(self))%4==0 && (RSTRING_LEN(in_string))%4==0) {
-			out_p=(char *)_binary_xor_32((uint32_t *)self_p, (RSTRING_LEN(self))/4, (uint32_t *)in_string_p, (RSTRING_LEN(in_string))/4);
-		} else {
+    if(self_len % 4 == 0 && in_len % 4 == 0) {
+        out_p = (char *)_binary_xor_32((uint32_t *)self_p, self_len / 4,
+            (uint32_t *)in_string_p, in_len / 4);
+    } else {
+        out_p = (char *)malloc(sizeof(char)* large_length);
 
-			out_p=(char *)malloc(sizeof(char)* large_length);
+        /*
+         * Copy the tail (the bit after the shorter string would end)
+         * verbatim from the longer string.
+         *
+         * But only if there actually is a longer string.
+         */
 
-			/*
-			 * Copy the tail (the bit after the shorter string would end)
-			 * verbatim from the longer string.
-			 *
-			 * But only if there actually is a longer string.
-			 */
+        if(small_length != large_length) {
+            memcpy(out_p + small_length,
+                (i_am_smaller ? in_string_p : self_p) + small_length,
+                large_length - small_length);
+        }
 
-			if(small_length!=large_length)
-					memcpy(out_p+small_length,
-								 (i_am_smaller ? in_string_p : self_p)+small_length,
-								 large_length-small_length);
-
-			/*
-			 * For each byte that exists in both strings, XOR the result into the
-			 * (start of the) output c-string
-			 */
-			for(i=0;i<small_length;i++) {
-					out_p[i]=self_p[i]^in_string_p[i];
-			}
-		}
+        /*
+         * For each byte that exists in both strings, XOR the result into the
+         * (start of the) output c-string
+         */
+        for(i = 0; i < small_length; i++) {
+            out_p[i] = self_p[i] ^ in_string_p[i];
+        }
+    }
 
     /*
      * Create a new "String" and massage it into the local class type.
      */
-    string_out=rb_str_new(out_p, large_length);
+    string_out = rb_str_new(out_p, large_length);
     free(out_p);
     return rb_class_new_instance(1, (VALUE *)&string_out, rb_obj_class(self));
 }
-
 
 /*
  * Almost exactly the same as String#to_str. Returns self as a "String".
@@ -249,7 +264,8 @@ static VALUE bs_to_str(VALUE self) {
 }
 
 /*
- *A subclass of String with a single purpose: to provide the ^ (XOR) operator, for encryption purposes.
+ * A subclass of String with a single purpose: to provide the ^ (XOR) operator,
+ * for encryption purposes.
 */
 void Init_bytestream() {
     VALUE cJdCrypt=rb_define_class("JdCrypt", rb_cObject);
