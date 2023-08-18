@@ -1,3 +1,9 @@
+v0.9.4
+Jim Driscoll (3):
+      Fix compat with modern Ruby API
+      Switch to a non-conflicting name
+      Routine code quality update (just whitespace)
+
 v0.9.3
 Jim Driscoll (10):
       Fix changelog
