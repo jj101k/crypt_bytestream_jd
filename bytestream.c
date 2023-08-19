@@ -70,7 +70,7 @@ static VALUE bs_binary_add(VALUE self, VALUE in_string) {
          * for cases where the overflow is absorbed early.
          */
         if(small_length != large_length) {
-            char *larger_string = i_am_smaller ? self_p : in_string_p;
+            char *larger_string = i_am_smaller ? in_string_p : self_p;
             for(i = small_length; i < large_length; i++) {
                 accumulator = larger_string[i] + overflow;
                 overflow = (accumulator >= 256) ? 1 : 0;
@@ -119,8 +119,8 @@ static uint32_t * _binary_add_32(uint32_t *string1, uint32_t length1,
      * of the longer string. Note that this is rather inefficient
      * for cases where the overflow is absorbed early.
      */
-    if(small_length!=large_length) {
-        uint32_t *larger_string=i_am_smaller ? string1 : string2;
+    if(small_length != large_length) {
+        uint32_t *larger_string = i_am_smaller ? string2 : string1;
         for(i = small_length; i < large_length; i++) {
             accumulator = ntohl(larger_string[i]) + overflow;
             overflow = (accumulator >= (1ll << 32)) ? 1 : 0;
