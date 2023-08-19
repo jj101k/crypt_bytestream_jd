@@ -12,8 +12,21 @@ puts(if(foo + "    " == ["868F8F9A"].pack("H*"))
 else
     "No"
 end)
+Foo = JdCrypt::ByteStream.new("FOOX")
+puts "Checking + (32b, long)..."
+puts(if(Foo + "        " == "foox    ")
+    "Ok"
+else
+    "No"
+end)
 puts "Checking + (8b)..."
 puts(if(foo + " " == ["866f6f7a"].pack("H*"))
+    "Ok"
+else
+    "No"
+end)
+puts "Checking + (8b, long)..."
+puts(if(Foo + "     " == "foox ")
     "Ok"
 else
     "No"
