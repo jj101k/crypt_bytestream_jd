@@ -27,6 +27,16 @@ a^bb^bb
             end
             self.class.new(out_bytes.pack("C*"))
         end
+=begin rdoc
+
+Binary add with a "String"-like object, return an object of the same class as
+self. This effectively is little-endian addition in 8-bit or 32-bit style,
+always carrying to the right.
+
+Returned values are of the same length as the longer value. Note that this means
+that overflows are _dropped_ if both values are the same length.
+
+=end
         def +(string)
             if(string.length % 4 == 0 and self.length % 4 == 0)
             my_dwords = self.unpack("N*")
