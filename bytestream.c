@@ -50,7 +50,7 @@ static VALUE bs_binary_add(VALUE self, VALUE in_string) {
 
     if(self_len % 4 == 0 && in_len % 4 == 0) {
         out_p = (char *)_binary_add_32((uint32_t *)self_p,
-            self_len/4, (uint32_t *)in_string_p, in_len/4);
+            self_len / 4, (uint32_t *)in_string_p, in_len / 4);
     } else {
         out_p = (char *)malloc(sizeof(char)* large_length);
 
