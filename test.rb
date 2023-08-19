@@ -6,6 +6,18 @@ puts(if(foo == "fooz")
 else
     "No"
 end)
+puts "Checking + (32b)..."
+puts(if(foo + "    " == ["868F8F9A"].pack("H*"))
+    "Ok"
+else
+    "No"
+end)
+puts "Checking + (8b)..."
+puts(if(foo + " " == ["866f6f7a"].pack("H*"))
+    "Ok"
+else
+    "No"
+end)
 puts "Checking XOR..."
 foo ^= "123"
 puts(if(foo == "W]\\z")
