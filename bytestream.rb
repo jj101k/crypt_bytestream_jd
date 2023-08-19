@@ -55,27 +55,18 @@ that overflows are _dropped_ if both values are the same length.
             else
                 my_bytes = self.unpack("C*")
                 other_bytes = string.unpack("C*")
-                (max_length, min_length) = if(my_bytes.length > other_bytes.length)
-                    [my_bytes.length, other_bytes.length]
+                max_length = if(my_bytes.length > other_bytes.length)
+                    my_bytes.length
                 else
-                    [other_bytes.length, my_bytes.length]
+                    other_bytes.length
                 end
                 out_bytes = Array.new
                 overflow = 0
-                0.upto(min_length - 1) do
+                0.upto(max_length - 1) do
                     |i|
                     accumulator = (my_bytes[i] || 0) + (other_bytes[i] || 0) + overflow
                     out_bytes[i] = accumulator & 0xff
                     overflow = accumulator > 0xff ? 1 : 0
-                end
-                if(min_length != max_length)
-                    larger_string = my_bytes.length > other_bytes.length ? my_bytes : other_bytes
-                    min_length.upto(max_length - 1) do
-                        |i|
-                        accumulator = (larger_string[i] || 0) + overflow
-                        out_bytes[i] = accumulator & 0xff
-                        overflow = accumulator > 0xff ? 1 : 0
-                    end
                 end
                 self.class.new(out_bytes.pack("C*"))
             end
