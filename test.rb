@@ -5,7 +5,7 @@ def assertWarn(v)
     puts(if v
         "Ok"
     else
-        "No"
+        "** NO **"
     end)
 end
 
