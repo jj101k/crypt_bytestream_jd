@@ -35,6 +35,14 @@ assertWarn(bar == "b r")
 puts "Checking byte-at (read)"
 assertWarn(bar.byte_at(0) == "b".ord)
 
+puts "Checking []="
+bar = JdCrypt::ByteStream.new("bar")
+bar[1] = " "
+assertWarn(bar == "b r")
+
+puts "Checking []"
+assertWarn(bar[0] == "b")
+
 TestTimes = 10000
 puts "Testing performance: #{TestTimes} simple XORs"
 TestTimes.times do
