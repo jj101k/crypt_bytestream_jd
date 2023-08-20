@@ -81,22 +81,39 @@ that overflows are _dropped_ if both values are the same length.
                 self.slice(position)
             end
         end
-        @@strict_mode = false
+        @@compatMode = "1.8"
+        def self.compatMode=(compatMode)
+            @@compatMode = compatMode
+        end
+        def self.compatMode()
+            @@compatMode
+        end
+        @@strictCompat = false
+        def self.strictCompat=(new_mode)
+            @@strictCompat = new_mode
+        end
+        def self.strictCompat()
+            @@strictCompat
+        end
         def self.strict_mode=(new_mode)
-            @@strict_mode = new_mode
+            @@strictCompat = new_mode
         end
         def [](anything, whatever = nil)
             if(whatever)
                 super(anything, whatever)
-            elsif(not anything.is_a? Numeric)
-                super(anything)
-            elsif(@@strict_mode)
+            elsif @@compatMode == "1.8"
                 # Ruby 1.8 would return a number for this. Ruby 1.9 would return
                 # a string for this. For a bytestream, we actually always want
                 # to return a number.
-                raise "Ambiguous, you must use #byte_at instead"
+                if(not anything.is_a? Numeric)
+                    super(anything)
+                elsif(@@strictCompat)
+                    raise "Ambiguous, you must use #byte_at instead"
+                else
+                    STDERR.puts "Ambiguous usage of [], please use #byte_at"
+                    super(anything)
+                end
             else
-                STDERR.puts "Ambiguous usage of [], please use #byte_at"
                 super(anything)
             end
         end
