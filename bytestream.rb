@@ -72,7 +72,7 @@ that overflows are _dropped_ if both values are the same length.
             end
         end
         Use_getbyte = "".respond_to?(:getbyte)
-        def byte_at(position, new_value=nil)
+        def byte_at(position, new_value = nil)
             if(new_value)
                 self[position, 1] = [new_value].pack("C")
             elsif(Use_getbyte)
@@ -91,6 +91,9 @@ that overflows are _dropped_ if both values are the same length.
             elsif(not anything.is_a? Numeric)
                 super(anything)
             elsif(@@strict_mode)
+                # Ruby 1.8 would return a number for this. Ruby 1.9 would return
+                # a string for this. For a bytestream, we actually always want
+                # to return a number.
                 raise "Ambiguous, you must use #byte_at instead"
             else
                 STDERR.puts "Ambiguous usage of [], please use #byte_at"
