@@ -265,6 +265,28 @@ static VALUE bs_to_str(VALUE self) {
 }
 
 /*
+ *
+ */
+
+static VALUE bs_byte_at(int argc, VALUE args[], VALUE self) {
+    char *self_p;
+
+    if (argc > 2 || argc < 1) {
+        rb_raise(rb_eArgError, "wrong number of arguments, only 1 or 2 supported");
+    }
+    long pos = NUM2LONG(args[0]);
+    if(pos > RSTRING_LEN(self) - 1) {
+        return Qnil;
+    } else {
+        self_p = RSTRING_PTR(self);
+        if(argc == 2 && !NIL_P(args[1])) {
+            self_p[pos] = NUM2INT(args[1]);
+        }
+        return INT2FIX(self_p[pos]);
+    }
+}
+
+/*
  * A subclass of String with a single purpose: to provide the ^ (XOR) operator,
  * for encryption purposes.
 */
@@ -274,4 +296,5 @@ void Init_bytestream() {
     rb_define_method(cSelf, "^", bs_binary_xor, 1);
     rb_define_method(cSelf, "+", bs_binary_add, 1);
     rb_define_method(cSelf, "to_str", bs_to_str, 0);
+    rb_define_method(cSelf, "byte_at", bs_byte_at, -1);
 }

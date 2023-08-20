@@ -46,6 +46,22 @@ else
     "No"
 end)
 
+puts "Checking byte-at (assign)"
+bar = JdCrypt::ByteStream.new("bar")
+bar.byte_at 1, 32
+puts(if(bar == "b r")
+    "Ok"
+else
+    "No"
+end)
+
+puts "Checking byte-at (read)"
+puts(if(bar.byte_at(0) == "b".ord)
+    "Ok"
+else
+    "No"
+end)
+
 TestTimes = 10000
 puts "Testing performance: #{TestTimes} simple XORs"
 TestTimes.times do
