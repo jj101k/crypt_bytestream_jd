@@ -94,6 +94,7 @@ that overflows are _dropped_ if both values are the same length.
                 raise "Ambiguous, you must use #byte_at instead"
             else
                 STDERR.puts "Ambiguous usage of [], please use #byte_at"
+                super(anything)
             end
         end
     end
