@@ -286,59 +286,6 @@ static VALUE bs_byte_at(int argc, VALUE args[], VALUE self) {
     }
 }
 
-ID eqeq;
-VALUE compatMode;
-char compatMode_1_8;
-
-static VALUE bs_compatMode() {
-    return compatMode;
-}
-
-static VALUE bs_compatMode_assign(VALUE self, VALUE cm) {
-    if(strncmp(StringValueCStr(cm), "1.8", 4) == 0) {
-        compatMode_1_8 = 1;
-    } else {
-        compatMode_1_8 = 0;
-    }
-    compatMode = cm;
-    return compatMode;
-}
-
-VALUE strictCompat = Qfalse;
-
-static VALUE bs_strictCompat() {
-    return strictCompat;
-}
-
-static VALUE bs_strictCompat_assign(VALUE self, VALUE sc) {
-    strictCompat = sc;
-    return strictCompat;
-}
-
-static VALUE bs_array_offset(int argc, VALUE argv[], VALUE self) {
-    char *self_p;
-    VALUE offsetOrRange;
-
-    if (argc > 2 || argc < 1) {
-        rb_raise(rb_eArgError, "wrong number of arguments, only 1 or 2 supported");
-    }
-    if(argc == 2) {
-        return rb_call_super(argc, argv);
-    } else if(compatMode_1_8) {
-        offsetOrRange = argv[0];
-        if(TYPE(offsetOrRange) != T_FIXNUM) {
-            return rb_call_super(argc, argv);
-        } else if(strictCompat == Qtrue) {
-            rb_raise(rb_eRuntimeError, "Ambiguous, you must use #byte_at instead");
-        } else {
-            rb_warn("Ambiguous usage of [], please use #byte_at");
-            return rb_call_super(argc, argv);
-        }
-    } else {
-        return rb_call_super(argc, argv);
-    }
-}
-
 /*
  * A subclass of String with a single purpose: to provide the ^ (XOR) operator,
  * for encryption purposes.
@@ -346,18 +293,8 @@ static VALUE bs_array_offset(int argc, VALUE argv[], VALUE self) {
 void Init_bytestream() {
     VALUE cJdCrypt=rb_define_class("JdCrypt", rb_cObject);
     VALUE cSelf=rb_define_class_under(cJdCrypt, "ByteStream", rb_cString);
-    rb_define_singleton_method(cSelf, "compatMode", bs_compatMode, 0);
-    rb_define_singleton_method(cSelf, "compatMode=", bs_compatMode_assign, 1);
-    rb_define_singleton_method(cSelf, "strictCompat", bs_strictCompat, 0);
-    rb_define_singleton_method(cSelf, "strictCompat=", bs_strictCompat_assign, 1);
-    rb_define_singleton_method(cSelf, "strict_mode=", bs_strictCompat_assign, 1);
     rb_define_method(cSelf, "^", bs_binary_xor, 1);
     rb_define_method(cSelf, "+", bs_binary_add, 1);
     rb_define_method(cSelf, "to_str", bs_to_str, 0);
     rb_define_method(cSelf, "byte_at", bs_byte_at, -1);
-    rb_define_method(cSelf, "[]", bs_array_offset, -1);
-
-    eqeq = rb_to_id(rb_str_new2("=="));
-    compatMode = rb_str_new2("1.8");
-    compatMode_1_8 = 1;
 }

@@ -43,34 +43,6 @@ assertWarn(bar == "b r")
 puts "Checking []"
 assertWarn(bar[0] == "b")
 
-puts "Checking strictCompat"
-assertWarn(JdCrypt::ByteStream.compatMode == "1.8")
-assertWarn(JdCrypt::ByteStream.strictCompat == false)
-bar[0] # No throw
-assertWarn((JdCrypt::ByteStream.strictCompat = true) == true)
-assertWarn(JdCrypt::ByteStream.strictCompat == true)
-begin
-    bar[0] # Throw
-    assertWarn(false)
-rescue
-    assertWarn(true)
-end
-JdCrypt::ByteStream.strictCompat = false
-
-puts "Checking strict_mode"
-JdCrypt::ByteStream.strict_mode = true
-assertWarn(JdCrypt::ByteStream.strictCompat == true)
-JdCrypt::ByteStream.strict_mode = false
-assertWarn(JdCrypt::ByteStream.strictCompat == false)
-
-puts "Checking compatMode (other)"
-assertWarn((JdCrypt::ByteStream.compatMode = "1.9") == "1.9")
-JdCrypt::ByteStream.strictCompat = true
-bar[0] # No throw
-
-JdCrypt::ByteStream.compatMode = "1.8"
-JdCrypt::ByteStream.strictCompat = false
-
 TestTimes = 10000
 puts "Testing performance: #{TestTimes} simple XORs"
 TestTimes.times do
