@@ -1,3 +1,26 @@
+v0.9.5
+Jim Driscoll (20):
+      Fix the pure ruby install
+      Minor style (whitespace) cleanup
+      Bug: with length mismatch, + would end with nulls
+      Port byte mode to the pure-ruby core
+      Update & standardise doc
+      Whitespace cleanups
+      Test update: cover + in both modes
+      Re-simplify
+      Test more cases
+      Port byte-at into the C code
+      Actually do return in warning mode
+      Explain that special case
+      Add some flexibility to the compat mode
+      Clearer arg names
+      Copy-paste reduction
+      Test []
+      Make "no" more obvious
+      Test strict mode
+      Add some compat fixes
+      Test compat mode
+
 v0.9.4
 Jim Driscoll (3):
       Fix compat with modern Ruby API
