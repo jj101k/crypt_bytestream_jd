@@ -8,5 +8,4 @@ an alternate (pure-ruby) core, that you can install by doing:
 
 ruby install-pr.rb
 
-However, you should note that the binary module is faster, if not
-massively so.
+However, you should note that the binary module is roughly 6x faster.
