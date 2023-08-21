@@ -43,9 +43,12 @@ assertWarn(bar == "b r")
 puts "Checking []"
 assertWarn(bar[0] == "b")
 
-TestTimes = 10000
+Before = Time::now
+TestTimes = 1_000_000
 puts "Testing performance: #{TestTimes} simple XORs"
 TestTimes.times do
   |i|
   foo ^= i.to_s
 end
+After = Time::now
+puts "Took #{After - Before}s"
