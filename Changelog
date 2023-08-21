@@ -1,3 +1,10 @@
+v1.0.0
+Jim Driscoll (4):
+      Support uninstalling the PR version
+      BREAKING CHANGE: Dropped all the old compat stuff
+      Improve performance testing
+      Improve advice a little
+
 v0.9.5
 Jim Driscoll (20):
       Fix the pure ruby install
